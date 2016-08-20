@@ -1,5 +1,12 @@
 {
+    "name": "passmarked/php",
+    "description": "Use the Passmarked Web API with simple and convenient object oriented PHP",
     "require": {
         "guzzlehttp/guzzle": "~6.0"
+    },
+    "autoload": {
+    "psr-4": {
+      "Passmarked\\":"src/"
     }
+  }
 }
