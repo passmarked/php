@@ -1,13 +1,34 @@
 {
     "name": "passmarked/php",
     "description": "Use the Passmarked Web API with simple and convenient object oriented PHP",
+    "keywords": ["guzzle", "passmarked", "json", "api", "psr"],
+    "homepage": "https://github.com/passmarked/php",
+    "license": "Apache 2.0",
+    "type": "library",
+    "authors": [
+      {
+        "name": "Passmarked Inc",
+        "homepage": "http://www.passmarked.com"
+      }
+    ],
     "require": {
-        "guzzlehttp/guzzle": "~6.0",
-        "php-http/message-factory": "^1.0"
+        "guzzlehttp/guzzle": "^6.0",
+        "guzzlehttp/promises": "^1.0",
+        "psr/http-message": "^1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.3",
+        "mockery/mockery": "~0.9"
+  },
     "autoload": {
-    "psr-4": {
-      "Passmarked\\":"src/"
+        "psr-4": {
+          "Passmarked\\":"src/"
+        },
+        "autoload-dev": {
+            "psr-4": {
+                "Passmarked\\Tests\\": "tests/"
+            }
+        }
     }
-  }
+  
 }

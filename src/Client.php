@@ -38,33 +38,34 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\Middleware;
-use Passmarked\ApiResponse;
-use Passmarked\Psr7\Request;
-use Passmarked\Psr7\MessageFactory;
+use Passmarked\RequestFactory;
+use Passmarked\HelperFactory;
 
 class Client extends GuzzleClient {
-    private $message_factory;
 
+    private $request_factory;
+    private $helper_factory;
+    
     public function __construct(array $guzzle_config = []) {
-      
-        $this->message_factory = new MessageFactory();
-        $guzzle_config['message_factory'] = $this->message_factory;
-
-        
+          
         if(!array_key_exists('handler',$guzzle_config)){
             $guzzle_config['handler'] = new HandlerStack();            
         } else {
-            if(!is_object($guzzle_config['handler']) || !is_a($guzzle_config['handler'],'\GuzzleHttp\HandlerStack')) {
+            if( !is_a($guzzle_config['handler'],'\GuzzleHttp\HandlerStack')) {
                     throw new \Exception("Invalid handler");
             }
         }
-  
-        $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapRequest(function (RequestInterface $request) {           
+        $this->request_factory = new RequestFactory($guzzle_config);
+        $this->helper_factory = new HelperFactory($guzzle_config);
+
+        $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapRequest(function (RequestInterface $request) {
+            //Add headers etc here           
             return $request;
         }));
 
         $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapResponse(function (ResponseInterface $response) {
-            return new \Passmarked\Psr7\Response($response);
+            return $response;
+            // return new \Passmarked\Psr7\Response($response);
         }));
 
         $guzzle_config['handler']->setHandler(new CurlHandler());
@@ -73,24 +74,11 @@ class Client extends GuzzleClient {
     }
 
     public function __call($method_called, $args) {
-        $class_name = ucfirst($method_called);
-        $api_class = "\\Passmarked\\Call\\{$class_name}";
-
-        try{
-            if(class_exists($api_class)) {
-                $api_call = new $api_class($args);
-                $request = $api_call->__toRequest();
-                // Synch request
-                $response = $this->send($request);
-                // Create Answer/Response/Reply
-                var_dump($response);exit;
-                return 'intention blank';
-            } else {
-                echo "class does not exist".__FILE__;
-            }
-        } catch (\Exception $e){
-            echo $e->getMessage();
-        }
+        $response_name = $method_called;
+        $request = call_user_func_array([$this->request_factory,$method_called],$args);
+        $psr7_response = $this->send($request);
+        $helper = call_user_func_array([$this->helper_factory,$method_called],[$psr7_response]);
+        return $helper;
 
     }
 
