@@ -86,26 +86,45 @@ class RequestFactory {
         );
     }
 
-    public function create($url, $recursive = false, $limit = null, $bail = false, $patterns = false, $token = '') {
+    public function create(
+        $url, 
+        $token = '', 
+        $recursive = false, 
+        $limit = 0, 
+        $bail = false, 
+        $level = 0, 
+        $patterns = [], 
+        $filters = []
+    ) {
+        
+        if( !$url ) {
+            // Url is required
+            throw new \Exception("URL Required");
+        }
+
         if( !$token ) {
             $token = $this->getTokenFromConfig();
+            if(!$token) {
+                // We must have a token
+                throw new \Exception("Token Required");
+            }
         }
-        $body = [
-             'form_params' => [
-                    'url'   => $url,
-                    'token' => $token,
-                    'limit' => $limit,
-                    'bail'  => $bail
-                ]
-        ];
+        $body = "url={$url}&token={$token}";
+        $body .= $recursive ? '&recursive=true' : '';
+        $body .= $limit && is_int($limit) ? "&limit={$limit}" : "&limit=0";
+        $body .= $bail && is_bool($bail) ? "&bail=true" : '';
+        $body .= $level && is_int($level) ? "&level={$level}" : '';
         if( $patterns ) {
-            $body['form_params']['patterns'] = $patterns;
+            foreach( $patterns as $pattern) {
+                $body .= is_string($pattern) ? "&patterns[]={$pattern}" : '';                
+            }
         }
 
         return new Request(
-            'POST', 
+            'POST',
+            $this->getBaseUri()."reports",
+            ['Content-Type' => 'application/x-www-form-urlencoded'],
             $body,
-            null, 
             $this->config['http_version']
         );
     }
