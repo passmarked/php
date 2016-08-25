@@ -33,7 +33,6 @@ namespace Passmarked;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
@@ -47,16 +46,34 @@ class Client extends GuzzleClient {
     private $helper_factory;
     
     public function __construct(array $guzzle_config = []) {
-          
-        if(!array_key_exists('handler',$guzzle_config)){
-            $guzzle_config['handler'] = new HandlerStack();            
-        } else {
-            if( !is_a($guzzle_config['handler'],'\GuzzleHttp\HandlerStack')) {
-                    throw new \Exception("Invalid handler");
-            }
+        
+        // Check config
+        if( !array_key_exists('telemetry', $guzzle_config)) {
+            $guzzle_config['telemetry'] = true;
         }
+
+        if( !array_key_exists('api_url', $guzzle_config)) {
+            $guzzle_config['api_url'] = 'https://api.passmarked.com';
+        }
+
+        if( !array_key_exists('api_version', $guzzle_config)) {
+            $guzzle_config['api_url'] = '2';
+        }
+        
+        if( !array_key_exists('http_version', $guzzle_config)) {
+            $guzzle_config['http_version'] = '1.1';
+        }
+
+        if( !array_key_exists('api_token', $guzzle_config)) {
+            $guzzle_config['api_token'] = '';
+        }
+        if( !array_key_exists('handler',$guzzle_config)) {
+            $guzzle_config['handler'] = new HandlerStack();
+            $guzzle_config['handler']->setHandler(new CurlHandler());
+        }
+
         $this->request_factory = new RequestFactory($guzzle_config);
-        $this->helper_factory = new HelperFactory($guzzle_config);
+        $this->helper_factory = new HelperFactory();
 
         $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapRequest(function (RequestInterface $request) {
             //Add headers etc here           
@@ -68,8 +85,15 @@ class Client extends GuzzleClient {
             // return new \Passmarked\Psr7\Response($response);
         }));
 
-        $guzzle_config['handler']->setHandler(new CurlHandler());
         
+        // Guzzle doesn't need these
+        unset($guzzle_config['telemetry']);
+        unset($guzzle_config['api_version']);
+        unset($guzzle_config['api_token']);
+        unset($guzzle_config['api_url']);
+        unset($guzzle_config['http_verion']);
+        
+
         parent::__construct($guzzle_config);
     }
 

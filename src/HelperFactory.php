@@ -7,11 +7,11 @@ use Passmarked\Helpers;
 
 class HelperFactory {
 
-    private $config;
+    // private $config;
 
-    public function __construct($config){
-        $this->config = $config;
-    }
+    // public function __construct($config){
+    //     $this->config = $config;
+    // }
     public function __call($method_name, $args) {
         $namespace = '\\Passmarked\\Helper\\';
         $class_name = $namespace . ucfirst($method_name);

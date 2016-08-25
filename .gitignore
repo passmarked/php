@@ -1,3 +1,5 @@
+#Testing with local PHPUnit
+tests.sh
 #PHP Testing
 *.test.php
 
