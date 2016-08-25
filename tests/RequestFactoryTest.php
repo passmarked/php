@@ -78,7 +78,6 @@ class RequestFactoryTest extends TestCase {
     public function testCreate() {
         $request_factory = new RequestFactory($this->config);
         $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
-            // public function create($url, $token = '', $recursive = false, $limit = 0, $bail = false, $level = 0, $patterns = []) {
 
         $request = $request_factory->create(
             'http://somesite.com', // url
@@ -123,7 +122,6 @@ class RequestFactoryTest extends TestCase {
     public function testCreateAllOptions() {
         $request_factory = new RequestFactory($this->config);
         $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
-            // public function create($url, $token = '', $recursive = false, $limit = 0, $bail = false, $level = 0, $patterns = []) {
 
         $request = $request_factory->create(
             'http://somesite.com',          // url
@@ -135,7 +133,6 @@ class RequestFactoryTest extends TestCase {
             ['(\w+)\t','\r\n(\w+)','\w\u0020\w'],   // patterns
             ['character ','allows']                 // filters
         );
-        // var_dump($request->getBody()->getContents());
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertEquals(
             'url=http://somesite.com&token=myapitoken&recursive=true&limit=5&bail=true&level=3&patterns[]=(\w+)\t&patterns[]=\r\n(\w+)&patterns[]=\w\u0020\w',
@@ -146,17 +143,16 @@ class RequestFactoryTest extends TestCase {
     public function testCreateBadOptions() {
         $request_factory = new RequestFactory($this->config);
         $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
-            // public function create($url, $token = '', $recursive = false, $limit = 0, $bail = false, $level = 0, $patterns = []) {
 
         $request = $request_factory->create(
             3833.33,          // url
-            333.12,                   // token
-            'recursion',                           // recursive
-            'limiting',                              // limit
-            234234.33,                           // bail
-            'levels',                              // level
-            [1,2,2],   // patterns
-            [2,44.3]                 // filters
+            333.12,           // token
+            'recursion',      // recursive
+            'limiting',       // limit
+            234234.33,        // bail
+            'levels',         // level
+            [1,2,2],          // patterns
+            [2,44.3]          // filters
         );
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertEquals(
