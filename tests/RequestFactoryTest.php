@@ -9,13 +9,11 @@ class RequestFactoryTest extends TestCase {
 
     private $config = [
         'api_url'      => 'https://api.passmarked.com',
-        // 'api_url'      => 'https://api.passmarked.com',
         'api_version'   => '2',
         'api_token'     => 'a76e916065eb11e6acc397d58e05fff63551471597348214',
         'http_version'  => '1.1',
         'telemetry'     => true
     ];
-
 
     public function testCanConstruct(){
         $request_factory = new RequestFactory($this->config);
@@ -27,9 +25,15 @@ class RequestFactoryTest extends TestCase {
      */
     public function testGetWebsites() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
         $request = $request_factory->getWebsites();
+        var_dump($request->getHeaders());
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
+        $this->assertArrayHasKey('Host',$request->getHeaders());
+        $host = $request->getHeaders()['Host'];
+        $this->assertEquals(
+            $this->config['api_url'],
+            'https://'.$host[0]
+        );
     }
 
     /**
@@ -37,7 +41,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testGetWebsite() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
         $request = $request_factory->getWebsite('1','token');
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
     }
@@ -47,7 +50,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testGetReport() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
         $request = $request_factory->getReport('1','token');
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
     }
@@ -57,7 +59,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testGetBalance() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
         $request = $request_factory->getBalance('token');
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
     }
@@ -67,7 +68,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testGetProfile() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
         $request = $request_factory->getProfile('token');
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
     }
@@ -77,7 +77,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testCreate() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
 
         $request = $request_factory->create(
             'http://somesite.com', // url
@@ -102,7 +101,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testCreateDefaultToken() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
 
         $request = $request_factory->create(
             'http://somesite.com' // url
@@ -110,8 +108,9 @@ class RequestFactoryTest extends TestCase {
 
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $contents = $request->getBody()->getContents();
+        $token = $this->config['api_token'];
         $this->assertEquals(
-            "url=http://somesite.com&token={$this->config['api_token']}&limit=0",            
+            "url=http://somesite.com&token={$token}&limit=0",            
             $contents
         );
     }
@@ -121,7 +120,6 @@ class RequestFactoryTest extends TestCase {
      */
     public function testCreateAllOptions() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
 
         $request = $request_factory->create(
             'http://somesite.com',          // url
@@ -142,7 +140,6 @@ class RequestFactoryTest extends TestCase {
 
     public function testCreateBadOptions() {
         $request_factory = new RequestFactory($this->config);
-        $this->assertInstanceof('Passmarked\\RequestFactory',$request_factory);
 
         $request = $request_factory->create(
             3833.33,          // url
