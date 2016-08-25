@@ -93,7 +93,7 @@ class RequestFactory {
         $limit = 0, 
         $bail = false, 
         $level = 0, 
-        $filters = [], 
+        $patterns = [], 
         $filters = []
     ) {
         
