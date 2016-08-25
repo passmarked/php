@@ -93,7 +93,7 @@ class RequestFactory {
         $limit = 0, 
         $bail = false, 
         $level = 0, 
-        $patterns = [], 
+        $filters = [], 
         $filters = []
     ) {
         
@@ -117,6 +117,12 @@ class RequestFactory {
         if( $patterns ) {
             foreach( $patterns as $pattern) {
                 $body .= is_string($pattern) ? "&patterns[]={$pattern}" : '';                
+            }
+        }
+
+        if( $filters ) {
+            foreach( $filters as $filter) {
+                $body .= is_string($filter) ? "&filters[]={$filter}" : '';                
             }
         }
 
