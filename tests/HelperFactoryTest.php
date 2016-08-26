@@ -70,25 +70,49 @@ class HelperFactoryTest extends TestCase {
     /**
      * @expectedException Passmarked\Exception\ApiErrorException
      */
-    public function test401Error() {
-        try{
+    public function test401ErrorInvalidToken() {
+        $helper_factory = new HelperFactory();
+        $mock_response_body = file_get_contents(dirname(__FILE__).'/responses/401/API_AUTH_FAILED.json');
+        $method_name = "generic";
+        $helper = $helper_factory->$method_name(
+            new \GuzzleHttp\Psr7\Response(
+                401,
+                ['X-PASSMARKED'],        
+                $mock_response_body,        
+                '1.1'
+            ));
+        // $this->assertObjectHasAttribute('api_error_code', $e);
+    }
 
-            $absolute_filenames = glob(dirname(__FILE__).'/responses/401/*.json');        
-            $helper_factory = new HelperFactory();
-            foreach( $absolute_filenames as $absolute_filename ) {
-                $method_name = $this->getMethodNameFromMockResponseFilename($absolute_filename);
-                $mock_response_body = file_get_contents($absolute_filename);
-                $helper = $helper_factory->$method_name(
-                new \GuzzleHttp\Psr7\Response(
-                    401,
-                    ['X-PASSMARKED'],        
-                    $mock_response_body,        
-                    '1.1'
-                ));
-            }
-        } catch(\Exception $e) {
-            $this->assertObjectHasAttribute('api_error_code', $e);
-            throw $e;
-        }
+    /**
+     * @expectedException Passmarked\Exception\ApiErrorException
+     */
+    public function test401ErrorTokenFailed() {
+        $helper_factory = new HelperFactory();
+        $mock_response_body = file_get_contents(dirname(__FILE__).'/responses/401/TOKEN_FAILED.json');
+        $method_name = "generic";
+        $helper = $helper_factory->$method_name(
+            new \GuzzleHttp\Psr7\Response(
+                401,
+                ['X-PASSMARKED'],        
+                $mock_response_body,        
+                '1.1'
+            ));
+    }
+
+    /**
+     * @expectedException Passmarked\Exception\ApiErrorException
+     */
+    public function test404ErrorNotFound() {
+        $helper_factory = new HelperFactory();
+        $mock_response_body = file_get_contents(dirname(__FILE__).'/responses/404/NOT_FOUND.json');
+        $method_name = "generic";
+        $helper = $helper_factory->$method_name(
+            new \GuzzleHttp\Psr7\Response(
+                404,
+                ['X-PASSMARKED'],        
+                $mock_response_body,        
+                '1.1'
+            ));
     }
 }

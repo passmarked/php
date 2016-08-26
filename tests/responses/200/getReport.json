@@ -1,0 +1,154 @@
+{
+  "status": "ok",
+  "item": {
+    "uid": "2016080b4b12c065R",
+    "status": "done",
+    "result": "success",
+    "pages": 50,
+    "crawled": 50,
+    "processed": 50,
+    "size": "6659669",
+    "biggest": "1851452",
+    "smallest": "69",
+    "entry": "/",
+    "path": "/",
+    "domain": "www.nufc.com",
+    "protocol": "http",
+    "websiteid": 156,
+    "recursive": true,
+    "score": 64.27,
+    "requests": 393,
+    "loadtime": 38920,
+    "fastest": 605,
+    "slowest": 605,
+    "checks": 13,
+    "tests": [
+      {
+        "count": 0,
+        "key": "javascript",
+        "category": "compatibility",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "html",
+        "category": "compatibility",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "spellcheck",
+        "category": "content",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "http",
+        "category": "security",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "network",
+        "category": "performance",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "inspect",
+        "category": "performance",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "links",
+        "category": "content",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "ssl",
+        "category": "security",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "seo",
+        "category": "content",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "malware",
+        "category": "security",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "mobile",
+        "category": "compatibility",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "social",
+        "category": "content",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      },
+      {
+        "count": 0,
+        "key": "css",
+        "category": "compatibility",
+        "notices": 0,
+        "warnings": 0,
+        "errors": 0,
+        "criticals": 0
+      }
+    ],
+    "robots": null,
+    "bail": false,
+    "level": null,
+    "patterns": [],
+    "notices": 725,
+    "warnings": 11173,
+    "errors": 825,
+    "criticals": 0,
+    "count": 12723
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "status": "error",
+  "code": "NOT_FOUND",
+  "message": "Requested resource not found"
+}

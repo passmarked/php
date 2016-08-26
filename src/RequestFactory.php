@@ -78,10 +78,20 @@ class RequestFactory {
         );
     }
 
-    public function getReport($key = '') {
+    public function getReports($token = '') {
         return new Request(
             'GET', 
-            $this->getBaseUri()."/reports/{$key}", 
+            $this->getBaseUri()."/reports?token={$token}", 
+            [], 
+            null, 
+            $this->config['http_version']
+        );
+    }
+
+    public function getReport($key = '',$token = '') {
+        return new Request(
+            'GET', 
+            $this->getBaseUri()."/reports/{$key}?token={$token}", 
             [], 
             null, 
             $this->config['http_version']

@@ -84,6 +84,15 @@ class RequestFactoryTest extends TestCase {
     /**
      * @depends testCanConstruct
      */
+    public function testGetReports() {
+        $request_factory = new RequestFactory($this->config);
+        $request = $request_factory->getReports('token');
+        $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
+    }
+
+    /**
+     * @depends testCanConstruct
+     */
     public function testGetBalance() {
         $request_factory = new RequestFactory($this->config);
         $request = $request_factory->getBalance('token');

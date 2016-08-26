@@ -1,0 +1,5 @@
+{
+  "status": "error",
+  "code": "TOKEN_FAILED",
+  "message": "Token is not valid, head to https://passmarked.com/tokens to check if the token is correct"
+}
