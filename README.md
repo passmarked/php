@@ -64,7 +64,7 @@ echo "Response Status: ".$report->get('status');
 echo "UID: ".$report->get('uid');
 ```
 
-### Get the raw response
+### Getting the PSR-7 Response
 ```php
 $config = [
     'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
