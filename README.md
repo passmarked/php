@@ -13,6 +13,8 @@ and conforms to the [PSR-7](http://www.php-fig.org/psr/psr-7/) standard. Passmar
 PSR-7 compatible HTTP client by using the **Passmarked\RequestFactory** class to generate **GuzzleHttp\Psr7\Request** instances
 that implement **Psr\Http\Message\RequestInterface**.
 
+See the usage examples below for more details.
+
 ## Install
 
 ### Composer
@@ -34,7 +36,7 @@ composer install
 ```
 e module can also be used as a regular module that allows programs to integrate with the Passmarked system.
 
-### API
+## API
 
 * [Authentication](https://github.com/passmarked/passmarked/wiki/authentication)
 * [create](https://github.com/passmarked/passmarked/wiki/create)
@@ -43,6 +45,46 @@ e module can also be used as a regular module that allows programs to integrate 
 * [getProfile](https://github.com/passmarked/passmarked/wiki/profile)
 * [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
 * [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
+
+## Usage Examples
+
+### Run a report
+```php
+$config = [
+    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+];
+$client = new \Passmarked\Client($config);
+
+$report = $client->create(['url' => 'http://www.github.com']);
+
+echo "Response Status: {$report->status}";
+echo "UID: {$report->uid}";
+// or
+echo "Response Status: ".$report->get('status');
+echo "UID: ".$report->get('uid');
+```
+
+### Get the raw response
+```php
+$config = [
+    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+];
+$client = new \Passmarked\Client($config);
+
+$response = $client->create(['url' => 'http://www.github.com'])->getPsr7Response();
+
+echo $response->getBody()->getContents();
+```
+
+### Generating Psr7 Requests
+```php
+$config = [
+    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+];
+$request_factory = \Passmarked\RequestFactory($config);
+$psr7_request = $request_factory->create(['url' => 'http://www.github.com']);
+// Then execute the request using your own client
+```
 
 ## Contributing
 
