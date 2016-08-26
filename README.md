@@ -7,6 +7,12 @@ Use the Passmarked Web API with simple and convenient object oriented PHP. You w
 which can be obtained by registering on [Passmarked](https://passmarked.com) and generating a token. Passmarked PHP
 does not include bindings to Passmarked's CLI toolkit. The Passmarked CLI tool lives in [this repo](https://github.com/passmarked/passmarked). 
 
+## About
+Passmarked PHP is based on [Guzzle 6](https://github.com/guzzle/guzzle) and [Guzzle Psr7](https://github.com/guzzle/psr7)
+and conforms to the [PSR-7](http://www.php-fig.org/psr/psr-7/) standard. Passmarked PHP can also be used with any other
+PSR-7 compatible HTTP client by using the **Passmarked\RequestFactory** class to generate **GuzzleHttp\Psr7\Request** instances
+that implement **Psr\Http\Message\RequestInterface**.
+
 ## Install
 
 ### Composer
