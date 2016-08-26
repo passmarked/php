@@ -44,7 +44,6 @@ class ClientTest extends TestCase {
 
     public function testMock() {
         $websites = $this->test_client->getWebsites();
-        // var_dump($websites);
     }
 
 }

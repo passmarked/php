@@ -1,5 +1,33 @@
 <?php
 
+/**
+ * Passmarked\Tests\RequestFactoryTest
+ *
+ * Tests for Passmarked\RequestFactory
+ *
+ * PHP version 5.6
+ *
+ * Copyright 2016 Passmarked Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @package    Passmarked
+ * @author     Werner Roets <werner@io.co.za>
+ * @copyright  2016 Passmarked Inc
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
+ * @link       http://pear.php.net/package/PackageName
+ */
+
 namespace Passmarked\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -26,7 +54,6 @@ class RequestFactoryTest extends TestCase {
     public function testGetWebsites() {
         $request_factory = new RequestFactory($this->config);
         $request = $request_factory->getWebsites();
-        var_dump($request->getHeaders());
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertArrayHasKey('Host',$request->getHeaders());
         $host = $request->getHeaders()['Host'];
@@ -77,21 +104,18 @@ class RequestFactoryTest extends TestCase {
      */
     public function testCreate() {
         $request_factory = new RequestFactory($this->config);
-
-        $request = $request_factory->create(
-            'http://somesite.com', // url
-            'myapitoken',          // token
-            false,                 // recursive
-            null,                  // limit
-            false,                 // bail
-            false,                 // level
-            [],                    // patterns
-            []                     // filters
-        );
-
+        $request = $request_factory->create([
+            'url'       => 'http://somesite.com',
+            'token'     => 'myapitoken',
+            'recursive' => false,
+            'limit'     => 0,
+            'bail'      => false,
+            'level'     => 0,
+            'patterns' => [],
+        ]);
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertEquals(
-            'url=http://somesite.com&token=myapitoken&limit=0',
+            'url=http://somesite.com&token=myapitoken&recursive=false&limit=0&bail=false',
             $request->getBody()->getContents()            
         );
     }
@@ -102,15 +126,12 @@ class RequestFactoryTest extends TestCase {
     public function testCreateDefaultToken() {
         $request_factory = new RequestFactory($this->config);
 
-        $request = $request_factory->create(
-            'http://somesite.com' // url
-        );
+        $request = $request_factory->create(['url' => 'http://somesite.com']);
 
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $contents = $request->getBody()->getContents();
-        $token = $this->config['api_token'];
         $this->assertEquals(
-            "url=http://somesite.com&token={$token}&limit=0",            
+            "url=http://somesite.com&token={$this->config['api_token']}",            
             $contents
         );
     }
@@ -121,16 +142,15 @@ class RequestFactoryTest extends TestCase {
     public function testCreateAllOptions() {
         $request_factory = new RequestFactory($this->config);
 
-        $request = $request_factory->create(
-            'http://somesite.com',          // url
-            'myapitoken',                   // token
-            true,                           // recursive
-            5,                              // limit
-            true,                           // bail
-            3,                              // level
-            ['(\w+)\t','\r\n(\w+)','\w\u0020\w'],   // patterns
-            ['character ','allows']                 // filters
-        );
+        $request = $request_factory->create([
+            'url'       => 'http://somesite.com',
+            'token'     => 'myapitoken',
+            'recursive' => true,
+            'limit'     => 5,
+            'bail'      => true,
+            'level'     => 3,
+            'patterns' => ['(\w+)\t','\r\n(\w+)','\w\u0020\w'],
+        ]);
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertEquals(
             'url=http://somesite.com&token=myapitoken&recursive=true&limit=5&bail=true&level=3&patterns[]=(\w+)\t&patterns[]=\r\n(\w+)&patterns[]=\w\u0020\w',
@@ -138,22 +158,24 @@ class RequestFactoryTest extends TestCase {
         );
     }
 
+    /**
+     * @depends testCanConstruct
+     */
     public function testCreateBadOptions() {
         $request_factory = new RequestFactory($this->config);
 
-        $request = $request_factory->create(
-            3833.33,          // url
-            333.12,           // token
-            'recursion',      // recursive
-            'limiting',       // limit
-            234234.33,        // bail
-            'levels',         // level
-            [1,2,2],          // patterns
-            [2,44.3]          // filters
-        );
+        $request = $request_factory->create([
+            'url'       => 3833.33,
+            'token'     => 333.12,
+            'recursive' => 77,
+            'limit'     => false,
+            'bail'      => 234234.33,
+            'level'     => 'random',
+            'patterns' => [1,2,2],
+        ]);
         $this->assertInstanceof('GuzzleHttp\\Psr7\\Request',$request);
         $this->assertEquals(
-            'url=3833.33&token=333.12&recursive=true&limit=0',
+            'url=3833.33&token=333.12&recursive=true&limit=0&bail=true&level=random&patterns[]=1&patterns[]=2&patterns[]=2',
             $request->getBody()->getContents()            
         );
     }

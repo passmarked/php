@@ -4,7 +4,7 @@
  * Passmarked\Client
  *
  * Makes requests to the Passmarked API and returns the results 
- * wrapped in objects
+ * wrapped in Passmarked\Helper objects
  *
  * PHP version 7
  *
@@ -98,8 +98,10 @@ class Client extends GuzzleClient {
     }
 
     public function __call($method_called, $args) {
+
         $response_name = $method_called;
         $request = call_user_func_array([$this->request_factory,$method_called],$args);
+        // var_dump($request->getBody()->getContents());exit;
         $psr7_response = $this->send($request);
         $helper = call_user_func_array([$this->helper_factory,$method_called],[$psr7_response]);
         return $helper;
