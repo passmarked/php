@@ -31,6 +31,8 @@
 namespace Passmarked;
 
 use Passmarked\Helpers;
+use Passmarked\Exception\ApiErrorException;
+use Passmarked\Exception\HelperFactoryException;
 
 class HelperFactory {
 
@@ -38,20 +40,25 @@ class HelperFactory {
         
         // Ensure the first argument is not null or false
         if( !($response = $args[0]) ) {
-            throw new Exception("Argument to {$method_name} must implement {$interface}");
+            throw new HelperFactoryException("Argument to {$method_name} must implement {$interface}");
         }
 
         // Ensure the first argument implements ResponseInterface
         $interface_name ='Psr\Http\\Message\\ResponseInterface';
         if( !in_array($interface_name, class_implements($response)) ) {
-            throw new Exception("Argument to {$method_name} must implement {$interface}");
+            throw new HelperFactoryException("Argument to {$method_name} must implement {$interface}");
         }
 
         // Check for API reported error
-        $code = $response->getStatusCode();
-        if ( $code >= 400 ) {
-            throw new \Exception("API Response code was {$code} ");
+        $http_code = $response->getStatusCode();
+        if ( $http_code >= 400 ) {
+            $json_body = json_decode($response->getBody()->getContents());
+            $api_code = $json_body->code;
+            $api_message = $json_body->message;
+            throw new ApiErrorException($api_message, $api_code, $http_code);
         }
+
+        // Create the helper
         $namespace = '\\Passmarked\\Helper\\';
         $class_name = $namespace . ucfirst($method_name);
         if( class_exists($class_name) ) {

@@ -89,9 +89,11 @@ class RequestFactory {
     }
 
     public function getBalance($token = '') {
+
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
+        
         return new Request(
             'GET', 
             $this->getBaseUri()."balance?token={$token}", 
@@ -102,9 +104,11 @@ class RequestFactory {
     }
 
     public function getProfile($token = '') {
+
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
+
         return new Request(
             'GET', 
             $this->getBaseUri()."user?token={$token}", 
@@ -115,7 +119,7 @@ class RequestFactory {
     }
 
     public function create($params){
-        // print_r($params);
+
         // This function only accepts an array
         if( !is_array($params) ) {
             throw new \Exception(__METHOD__.' expects type array');
@@ -134,7 +138,7 @@ class RequestFactory {
         // Required arguments
         $body = "url={$params['url']}&token={$params['token']}";
 
-        // Remove these from the array
+        // These were already processed
         unset($params['url']);
         unset($params['token']);
 
@@ -169,6 +173,7 @@ class RequestFactory {
                     break;
             }
         }
+
         // Return request
         return new Request(
             'POST', 

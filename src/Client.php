@@ -6,7 +6,7 @@
  * Makes requests to the Passmarked API and returns the results 
  * wrapped in Passmarked\Helper objects
  *
- * PHP version 7
+ * PHP version 5.6
  *
  * Copyright 2016 Passmarked Inc
  *
@@ -41,67 +41,84 @@ use Passmarked\RequestFactory;
 use Passmarked\HelperFactory;
 
 class Client extends GuzzleClient {
+    
+    /** @var string Passmarked/Php Client version. */
+    private $version = "1.0";
 
+    /** @var Passmarked\RequestFactory  */    
     private $request_factory;
+
+    /** @var Passmarked\HelperFactory */    
     private $helper_factory;
     
-    public function __construct(array $guzzle_config = []) {
+    /**
+     * @param array $config Our config, with any guzzle options included
+     */
+    public function __construct( array $config = []) {
         
-        // Check config
-        if( !array_key_exists('telemetry', $guzzle_config)) {
-            $guzzle_config['telemetry'] = true;
+        // Split our options from guzzle options
+        // unrecognised options will be passed to guzzle
+        $accepted = ['telemetry' => '','api_url' => '','api_version' => '','http_version' => '','api_token' => ''];
+        $our_options = array_intersect_key($config,$accepted);
+        $guzzle_options = array_diff_key($config,$our_options);
+
+        // Check config and fallback to defaults as required
+        if( !array_key_exists('telemetry', $our_options)) {
+            $our_options['telemetry'] = true;
         }
 
-        if( !array_key_exists('api_url', $guzzle_config)) {
-            $guzzle_config['api_url'] = 'https://api.passmarked.com';
+        if( !array_key_exists('api_url', $our_options)) {
+            $our_options['api_url'] = 'https://api.passmarked.com';
         }
 
-        if( !array_key_exists('api_version', $guzzle_config)) {
-            $guzzle_config['api_url'] = '2';
+        if( !array_key_exists('api_version', $our_options)) {
+            $our_options['api_url'] = '2';
         }
         
-        if( !array_key_exists('http_version', $guzzle_config)) {
-            $guzzle_config['http_version'] = '1.1';
+        if( !array_key_exists('http_version', $our_options)) {
+            $our_options['http_version'] = '1.1';
         }
 
-        if( !array_key_exists('api_token', $guzzle_config)) {
-            $guzzle_config['api_token'] = '';
-        }
-        if( !array_key_exists('handler',$guzzle_config)) {
-            $guzzle_config['handler'] = new HandlerStack();
-            $guzzle_config['handler']->setHandler(new CurlHandler());
+        if( !array_key_exists('api_token', $our_options) ) {
+            $our_options['api_token'] = '';
         }
 
-        $this->request_factory = new RequestFactory($guzzle_config);
+        if( !array_key_exists('handler',$guzzle_options) ) {
+            $guzzle_options['handler'] = new HandlerStack();
+            $guzzle_options['handler']->setHandler(new CurlHandler());
+        }
+
+        // Intialise factories
+        $this->request_factory = new RequestFactory($our_options);
         $this->helper_factory = new HelperFactory();
 
-        $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapRequest(function (RequestInterface $request) {
-            //Add headers etc here           
+        // Inject request headers
+        $guzzle_options['handler']->push(\GuzzleHttp\Middleware::mapRequest(function (RequestInterface $request) {
+            // Prepend Passmarked/Php User-Agent info
+            $user_agent = $request->getHeader('User-Agent');
+            $request = $request->withoutHeader('User-Agent');            
+            $request = $request->withHeader('User-Agent', "Passmarked/Php/{$this->version} {$user_agent[0]}");
             return $request;
         }));
 
-        $guzzle_config['handler']->push(\GuzzleHttp\Middleware::mapResponse(function (ResponseInterface $response) {
+        // Inject/Exctract response information
+        $guzzle_options['handler']->push(\GuzzleHttp\Middleware::mapResponse(function (ResponseInterface $response) {
             return $response;
-            // return new \Passmarked\Psr7\Response($response);
         }));
-
         
-        // Guzzle doesn't need these
-        unset($guzzle_config['telemetry']);
-        unset($guzzle_config['api_version']);
-        unset($guzzle_config['api_token']);
-        unset($guzzle_config['api_url']);
-        unset($guzzle_config['http_verion']);
-        
-
-        parent::__construct($guzzle_config);
+        parent::__construct($guzzle_options);
     }
 
+    /**
+     * @param string $method_called 
+     * @param array $args
+     */
     public function __call($method_called, $args) {
-
+                
         $response_name = $method_called;
         $request = call_user_func_array([$this->request_factory,$method_called],$args);
         // var_dump($request->getBody()->getContents());exit;
+        
         $psr7_response = $this->send($request);
         $helper = call_user_func_array([$this->helper_factory,$method_called],[$psr7_response]);
         return $helper;

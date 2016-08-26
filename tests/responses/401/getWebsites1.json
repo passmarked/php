@@ -1,0 +1,5 @@
+{
+  "status": "error",
+  "code": "API_AUTH_FAILED",
+  "message": "Valid API token is required, check out https://passmarked.com/grant to register a new token that can be used"
+}

@@ -38,17 +38,22 @@ use Passmarked\HelperFactory;
 class HelperFactoryTest extends TestCase {
     
     public function testCanConstruct() {
-        $helper_factory = new HelperFactory($config);
+        $helper_factory = new HelperFactory();
         $this->assertInstanceof('Passmarked\\HelperFactory',$helper_factory);
         
     }
 
+    private function getMethodNameFromMockResponseFilename($absolute_filename) {
+         $filename = explode('/',$absolute_filename);
+         return preg_replace("/\d+$/",'',explode('.',end($filename))[0]);
+    }
+
     public function testMakeHelper() {
-        $helper_factory = new HelperFactory($config);
-        $absolute_filenames = glob(getcwd().'/tests/responses/*.json');
+        $helper_factory = new HelperFactory();
+
+        $absolute_filenames = glob(dirname(__FILE__).'/responses/200/*.json');
         foreach( $absolute_filenames as $absolute_filename ) {
-            $filename = explode('/',$absolute_filename);
-            $method_name = end($filename);
+            $method_name = $this->getMethodNameFromMockResponseFilename($absolute_filename);
             $mock_response_body = file_get_contents($absolute_filename);
             $helper = $helper_factory->$method_name(
             new \GuzzleHttp\Psr7\Response(
@@ -62,7 +67,28 @@ class HelperFactoryTest extends TestCase {
         }
     }
 
-    public function testInvalidResponse() {
-        
+    /**
+     * @expectedException Passmarked\Exception\ApiErrorException
+     */
+    public function test401Error() {
+        try{
+
+            $absolute_filenames = glob(dirname(__FILE__).'/responses/401/*.json');        
+            $helper_factory = new HelperFactory();
+            foreach( $absolute_filenames as $absolute_filename ) {
+                $method_name = $this->getMethodNameFromMockResponseFilename($absolute_filename);
+                $mock_response_body = file_get_contents($absolute_filename);
+                $helper = $helper_factory->$method_name(
+                new \GuzzleHttp\Psr7\Response(
+                    401,
+                    ['X-PASSMARKED'],        
+                    $mock_response_body,        
+                    '1.1'
+                ));
+            }
+        } catch(\Exception $e) {
+            $this->assertObjectHasAttribute('api_error_code', $e);
+            throw $e;
+        }
     }
 }

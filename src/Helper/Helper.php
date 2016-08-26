@@ -35,7 +35,8 @@ use Psr\Http\Message\ResponseInterface;
 class Helper {
     protected $response;
     protected $properties;
-    public function __construct(ResponseInterface $response){
+
+    public function __construct(ResponseInterface $response, $error = []){
         $this->properties = json_decode($response->getBody());
         if( !$this->properties ) throw new \Exception("Can't parse JSON");
         $this->response = $response;
