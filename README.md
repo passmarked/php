@@ -46,22 +46,71 @@ e module can also be used as a regular module that allows programs to integrate 
 * [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
 * [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
 
-## Usage Examples
+## How to use
+You can use Passmarked PHP in a variety of ways: 
+* The easiest way is to use the **Passmarked\Client** class to do the HTTP request 
+and return a **Passmarked\Helper** object which will give you easy access to the
+information returned by the Web API. The simplest example of using Passmarked PHP in
+this way, looks like this:
+```php
+$config = [
+    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // required
+    'api_url'      => 'https://api.passmarked.com', // optional / default
+    'api_version'   => '2',     // optional / default
+    'http_version'  => '1.1',   // optional / default
+    'telemetry'     => true     // optional / default
+];
+$client = new \Passmarked\Client([$config); // Get one on passmarked.com
+$websites_helper = $client->getWebsites();
+echo $helper->websites_helper;
+// Outputs "ok" or "error" if the Web API returned an error. 
+```
+Any other config options will be passed to the underlying **GuzzleHttp\Client** constructor.
+For supported options see [Guzzle's Quickstart](http://docs.guzzlephp.org/en/latest/quickstart.html). However `base_uri`
+will always be replaced with `api_url` or fallback to the default `https://api.passmarked.com`.
 
-### Run a report
+* Alternatively, you can generate **GuzzleHttp\Psr7\Request** objects using the **Passmarked\RequestFactory**
+and execute the request with another PSR-7 compatible client:
+```php
+$request_factory = \Passmarked\RequestFactory($config);
+$psr7_request = $request_factory->getWebsites();
+```
+* You can also "***unwrap***" the helpers to get the **GuzzleHttp\Psr7\Response** from them.
+Just use **getPsr7Response()** on a helper:
+```php
+$websites_helper = $client->getWebsites();
+$psr7_response = $websites_helper->getPsr7Response();
+```
+
+### Create
+Create is the only method of **Passmarked\Client** that expects an array of arguments.
+Supported options:
+```php
+$options = [
+    'url'       => 'http://somesite.com', // The site to test
+    'token'     => 'myapitoken', // Optional, falls back to your client config
+    'recursive' => false,   // Optional
+    'limit'     => 0,       // Optional
+    'bail'      => false,   // Optional
+    'level'     => 0,       // Optional
+    'patterns' => [],       // Optional
+]
+```
+
+### Full Examples
 ```php
 $config = [
     'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
 ];
 $client = new \Passmarked\Client($config);
 
-$report = $client->create(['url' => 'http://www.github.com']);
+$create_helper = $client->create(['url' => 'http://www.github.com']);
 
 echo "Response Status: {$report->status}";
-echo "UID: {$report->uid}";
+echo "UID: {$create_helper->uid}";
 // or
 echo "Response Status: ".$report->get('status');
-echo "UID: ".$report->get('uid');
+echo "UID: ".$create_helper->get('uid');
 ```
 
 ### Getting the PSR-7 Response
@@ -76,7 +125,7 @@ $response = $client->create(['url' => 'http://www.github.com'])->getPsr7Response
 echo $response->getBody()->getContents();
 ```
 
-### Generating Psr7 Requests
+### Generating PSR-7 Requests
 ```php
 $config = [
     'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
