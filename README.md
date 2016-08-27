@@ -95,9 +95,45 @@ $options = [
     'level'     => 0,       // Optional
     'patterns' => [],       // Optional
 ]
+$create_helper = $client->create($options);
+echo $create_helper-uid;
+echo $create_helper-status;
 ```
 
-### Full Examples
+### getWebsites
+```php
+$websites_helper = $client->getWebsites();
+```
+
+### getWebsite
+```php
+$website_helper = $client->getWebsite($key);
+```
+
+### getReport
+```php
+$report_helper = $client->getReport($uid);
+```
+
+### getProfile
+```php
+$profile_helper = $client->getProfile();
+```
+
+### getBalance
+```php
+$balance_helper = $client->getBalance();
+```
+All methods except create optionally accept a API token string as the last parameter:
+```php
+$websites_helper = $client->getWebsites();
+$website_helper = $client->getWebsite($uid);
+$report_helper = $client->getReport($uid);
+$profile_helper = $client->getProfile();
+$balance_helper = $client->getBalance();
+```
+
+## Full Examples
 ```php
 $config = [
     'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
