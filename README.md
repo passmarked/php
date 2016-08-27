@@ -43,7 +43,7 @@ information returned by the Web API. The simplest example of using Passmarked PH
 this way, looks like this:
 ```php
 $config = [
-    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // required
+    'api_token'     => 'PASSMARKED_API_TOKEN', // required
     'api_url'      => 'https://api.passmarked.com', // optional / default
     'api_version'   => '2',     // optional / default
     'http_version'  => '1.1',   // optional / default
@@ -115,17 +115,17 @@ $balance_helper = $client->getBalance();
 ```
 All methods except create optionally accept a API token string as the last parameter:
 ```php
-$websites_helper = $client->getWebsites$('YOUR_API_TOKEN');
-$website_helper = $client->getWebsite($uid,'YOUR_API_TOKEN');
-$report_helper = $client->getReport($uid,'YOUR_API_TOKEN');
-$profile_helper = $client->getProfile('YOUR_API_TOKEN');
-$balance_helper = $client->getBalance('YOUR_API_TOKEN');
+$websites_helper = $client->getWebsites$('PASSMARKED_API_TOKEN');
+$website_helper = $client->getWebsite($uid,'PASSMARKED_API_TOKEN');
+$report_helper = $client->getReport($uid,'PASSMARKED_API_TOKEN');
+$profile_helper = $client->getProfile('PASSMARKED_API_TOKEN');
+$balance_helper = $client->getBalance('PASSMARKED_API_TOKEN');
 ```
 
 ## Full Examples
 ```php
 $config = [
-    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+    'api_token'     => 'PASSMARKED_API_TOKEN', // Get one on passmarked.com
 ];
 $client = new \Passmarked\Client($config);
 
@@ -141,7 +141,7 @@ echo "UID: ".$create_helper->get('uid');
 ### Getting the PSR-7 Response
 ```php
 $config = [
-    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+    'api_token'     => 'PASSMARKED_API_TOKEN', // Get one on passmarked.com
 ];
 $client = new \Passmarked\Client($config);
 
@@ -153,7 +153,7 @@ echo $response->getBody()->getContents();
 ### Generating PSR-7 Requests
 ```php
 $config = [
-    'api_token'     => 'YOUR_PASSMARKED_API_TOKEN', // Get one on passmarked.com
+    'api_token'     => 'PASSMARKED_API_TOKEN', // Get one on passmarked.com
 ];
 $request_factory = \Passmarked\RequestFactory($config);
 $psr7_request = $request_factory->create(['url' => 'http://www.github.com']);
