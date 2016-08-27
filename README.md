@@ -34,17 +34,6 @@ git clone git@github.com:passmarked/php.git passmarked-php/
 cd passmarked-php/
 composer install
 ```
-e module can also be used as a regular module that allows programs to integrate with the Passmarked system.
-
-## API
-
-* [Authentication](https://github.com/passmarked/passmarked/wiki/authentication)
-* [create](https://github.com/passmarked/passmarked/wiki/create)
-* [getReport](https://github.com/passmarked/passmarked/wiki/report)
-* [getWebsites](https://github.com/passmarked/passmarked/wiki/websites)
-* [getProfile](https://github.com/passmarked/passmarked/wiki/profile)
-* [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
-* [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
 
 ## How to use
 You can use Passmarked PHP in a variety of ways: 
@@ -171,6 +160,15 @@ $psr7_request = $request_factory->create(['url' => 'http://www.github.com']);
 // Then execute the request using your own client
 ```
 
+## Main API Reference
+
+* [Authentication](https://github.com/passmarked/passmarked/wiki/authentication)
+* [create](https://github.com/passmarked/passmarked/wiki/create)
+* [getReport](https://github.com/passmarked/passmarked/wiki/report)
+* [getWebsites](https://github.com/passmarked/passmarked/wiki/websites)
+* [getProfile](https://github.com/passmarked/passmarked/wiki/profile)
+* [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
+* [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
 ## Contributing
 
 1. Fork the project
