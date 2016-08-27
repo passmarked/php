@@ -115,11 +115,11 @@ $balance_helper = $client->getBalance();
 ```
 All methods except create optionally accept a API token string as the last parameter:
 ```php
-$websites_helper = $client->getWebsites();
-$website_helper = $client->getWebsite($uid);
-$report_helper = $client->getReport($uid);
-$profile_helper = $client->getProfile();
-$balance_helper = $client->getBalance();
+$websites_helper = $client->getWebsites$('YOUR_API_TOKEN');
+$website_helper = $client->getWebsite($uid,'YOUR_API_TOKEN');
+$report_helper = $client->getReport($uid,'YOUR_API_TOKEN');
+$profile_helper = $client->getProfile('YOUR_API_TOKEN');
+$balance_helper = $client->getBalance('YOUR_API_TOKEN');
 ```
 
 ## Full Examples
