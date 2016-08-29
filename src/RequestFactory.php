@@ -3,7 +3,7 @@
 /**
  * Passmarked\RequestFactory
  *
- * Creates Guzzle\HttpPsr7\Request instances for each API function
+ * Creates GuzzleHttp\Psr7\Request instances for each API function
  *
  * PHP version 5.6
  *
@@ -25,9 +25,9 @@
  * @author     Werner Roets <werner@io.co.za>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
- * @link       http://pear.php.net/package/PackageName
+ * @link       http://packagist.org/packages/passmarked/php
  */
-
+ 
 namespace Passmarked;
 
 use GuzzleHttp\Psr7\Request;
@@ -36,7 +36,7 @@ class RequestFactory {
 
     private $config;
 
-    public function __construct($config){
+    public function __construct( $config ){
         $this->config = $config;
     }
 
@@ -52,7 +52,7 @@ class RequestFactory {
         }
     }
 
-    public function getWebsites($token = '') {
+    public function getWebsites( $token = '' ) {
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
@@ -65,7 +65,7 @@ class RequestFactory {
         );
     }
 
-    public function getWebsite($id, $token = '') {
+    public function getWebsite( $id, $token = '' ) {
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
@@ -78,7 +78,7 @@ class RequestFactory {
         );
     }
 
-    public function getReports($token = '') {
+    public function getReports( $token = '' ) {
         return new Request(
             'GET', 
             $this->getBaseUri()."/reports?token={$token}", 
@@ -88,7 +88,7 @@ class RequestFactory {
         );
     }
 
-    public function getReport($key = '',$token = '') {
+    public function getReport( $key = '',$token = '' ) {
         return new Request(
             'GET', 
             $this->getBaseUri()."/reports/{$key}?token={$token}", 
@@ -98,7 +98,7 @@ class RequestFactory {
         );
     }
 
-    public function getBalance($token = '') {
+    public function getBalance( $token = '' ) {
 
         if( !$token ) {
             $token = $this->getTokenFromConfig();
@@ -113,7 +113,7 @@ class RequestFactory {
         );
     }
 
-    public function getProfile($token = '') {
+    public function getProfile( $token = '' ) {
 
         if( !$token ) {
             $token = $this->getTokenFromConfig();
@@ -128,14 +128,14 @@ class RequestFactory {
         );
     }
 
-    public function create($params){
+    public function create( $params ){
 
         // This function only accepts an array
         if( !is_array($params) ) {
             throw new \Exception(__METHOD__.' expects type array');
         }  
         // Check that URL was passed
-        if( !array_key_exists('url', $params) || !$params['url']  ) {
+        if( !array_key_exists( 'url', $params) || !$params['url'] ) {
             throw new \Exception("URL Required");
         }
 

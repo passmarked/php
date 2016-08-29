@@ -25,7 +25,7 @@
  * @author     Werner Roets <werner@io.co.za>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
- * @link       https://github.com/passmarked/php
+ * @link       http://packagist.org/packages/passmarked/php
  */
 
 namespace Passmarked\Helper;
@@ -33,20 +33,24 @@ namespace Passmarked\Helper;
 use Psr\Http\Message\ResponseInterface;
 
 class Helper {
+
+    /** @var ResponseInterface $response The Psr7 Response */
     protected $response;
+
+    /** @var stdObject $properties The data the API responsed with */
     protected $properties;
 
-    public function __construct(ResponseInterface $response, $error = []){
+    public function __construct( ResponseInterface $response, $error = [] ){
         $this->properties = json_decode($response->getBody());
         if( !$this->properties ) throw new \Exception("Can't parse JSON");
         $this->response = $response;
     }
 
-    public function __get($property) {
+    public function __get( $property ) {
         return $this->get($property);
     }
 
-    public function get($property) {
+    public function get( $property ) {
         if( property_exists($this->properties,$property)) {
             return $this->properties->$property;
         } else {

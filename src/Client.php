@@ -54,7 +54,7 @@ class Client extends GuzzleClient {
     /**
      * @param array $config Our config, with any guzzle options included
      */
-    public function __construct( array $config = []) {
+    public function __construct( array $config = [] ) {
         
         // Split our options from guzzle options
         // unrecognised options will be passed to guzzle
@@ -113,12 +113,10 @@ class Client extends GuzzleClient {
      * @param string $method_called 
      * @param array $args
      */
-    public function __call($method_called, $args) {
+    public function __call( $method_called, $args ) {
                 
         $response_name = $method_called;
-        $request = call_user_func_array([$this->request_factory,$method_called],$args);
-        // var_dump($request->getBody()->getContents());exit;
-        
+        $request = call_user_func_array([$this->request_factory,$method_called],$args);        
         $psr7_response = $this->send($request);
         $helper = call_user_func_array([$this->helper_factory,$method_called],[$psr7_response]);
         return $helper;
