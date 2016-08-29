@@ -1,9 +1,9 @@
 <?php
-
+#@
 /**
- * Passmarked\Exception\HelperFactoryException
+ * Passmarked\Exception\RequestFactoryException
  *
- * HelperFactoryException is thrown when a helper cannot be created
+ * RequestFactory Exception
  *
  * PHP version 5.6
  *
@@ -33,9 +33,9 @@ namespace Passmarked\Exception;
 
 use Passmarked\Exception\PassmarkedException;
 
-class HelperFactoryException extends PassmarkedException {
+class RequestFactoryException extends PassmarkedException {
 
-    public function __construct($message) {
+    public function __construct( $message ) {
         parent::__construct($message);
     }
 }

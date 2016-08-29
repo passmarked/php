@@ -25,14 +25,18 @@
  * @author     Werner Roets <werner@io.co.za>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
- * @link       http://packagist.org/packages/passmarked/php
+ * @link       http://packagist.org/packages/passmarked/passmarked
+ * @link       https://github.com/passmarked/php
  */
  
 namespace Passmarked\Exception;
 
-class ApiErrorException extends \Exception {
+use Passmarked\Exception\PassmarkedException;
+
+class ApiErrorException extends PassmarkedException {
+
     private $api_error_code;
-    public function __construct($message, $api_error_code, $http_code) {
+    public function __construct( $message, $api_error_code, $http_code ) {
         $this->api_error_code = $api_error_code;
         parent::__construct($message, $http_code);
     }

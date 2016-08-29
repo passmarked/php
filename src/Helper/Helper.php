@@ -25,7 +25,8 @@
  * @author     Werner Roets <werner@io.co.za>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
- * @link       http://packagist.org/packages/passmarked/php
+ * @link       http://packagist.org/packages/passmarked/passmarked
+ * @link       https://github.com/passmarked/php
  */
 
 namespace Passmarked\Helper;
@@ -40,29 +41,110 @@ class Helper {
     /** @var stdObject $properties The data the API responsed with */
     protected $properties;
 
+    /** @var int The index for the at function */
+    private $index;
+
+    /**
+     * @param ResponseInterface The Psr7Response
+     * @param array Error
+     */
     public function __construct( ResponseInterface $response, $error = [] ){
         $this->properties = json_decode($response->getBody());
         if( !$this->properties ) throw new \Exception("Can't parse JSON");
         $this->response = $response;
+        $this->index = null;
     }
 
+    /**
+     * Magic method access to properties
+     */
     public function __get( $property ) {
-        return $this->get($property);
+        return $this->get( $property );
     }
 
+    /**
+     * Access properties using the get method
+     * @param string The property you want to get
+     * @return mixed The property access or null if not available
+     */
     public function get( $property ) {
-        if( property_exists($this->properties,$property)) {
-            return $this->properties->$property;
+        
+        if( $this->index ) {
+            if( property_exists( $this->items[$this->index], $property ) ) {
+                return $this->items[$this->index]->$property;
+            } else {
+                return null;
+            }
         } else {
-            if ( property_exists($this->properties->item,$property) ) {
-                return $this->properties->item->$property;
+            if( property_exists( $this->item, $property) ) {
+                return $this->item->$property;
             } else {
                 return null;
             }
         }
     }
 
-    public function getPsr7Response(){
+    /**
+     * Set which item you want to access
+     * @param int The index of the item
+     * @return Passmarked\Helper This instance
+     */
+    public function at( $index ) {
+        $this->index = $index;
+        return $this;
+    }
+
+    /**
+     * Get the Status as reported by the API
+     * @return string The status 
+     */
+    public function getStatus() {
+        if( property_exists( $this->properties, 'status') ) {
+            return $this->properties->status;
+        } else {
+            throw new \Exception( "Response has no status" );
+        }
+    }
+
+    /**
+     * Get the code of the API response
+     * @return string The code
+     */
+    public function getCode() {
+        if( property_exists( $this->properties, 'code' ) ) {
+            return $this->properties->code;
+        } else {
+            return 'OKAY';
+        }
+    }
+
+    /**
+     * Get the message of the API response
+     * @return string The message
+     */
+    public function getMessage() {
+        if( property_exists( $this->properties, 'message' ) ) {
+            return $this->properties->message;
+        } else {
+            return "Okay";
+        }
+    }
+
+    /**
+     * Get the size of the response
+     * @return int The length of the response body
+     */
+     public function getSize() {
+         if( $this->response->hasHeader( 'content-length' ) ) {
+             return (int) $this->response->getHeader( 'content-length' );
+         }
+     }
+
+    /**
+     * Return the GuzzleHttp\Psr7\Response
+     * @return GuzzleHttp\Psr7\Response 
+     */
+    public function getPsr7Response() {
         return $this->response;
     }
 }

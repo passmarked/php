@@ -1,5 +1,5 @@
 {
-    "name": "passmarked/php",
+    "name": "passmarked/passmarked",
     "description": "Use the Passmarked Web API with simple and convenient object oriented PHP",
     "keywords": ["guzzle", "passmarked", "json", "api", "psr"],
     "homepage": "https://github.com/passmarked/php",

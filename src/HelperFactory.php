@@ -1,5 +1,5 @@
 <?php
-
+#@
 /**
  * Passmarked\HelperFactory
  *
@@ -25,7 +25,8 @@
  * @author     Werner Roets <werner@io.co.za>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
- * @link       http://pear.php.net/package/PackageName
+ * @link       http://packagist.org/packages/passmarked/passmarked
+ * @link       https://github.com/passmarked/php
  */
 
 namespace Passmarked;
@@ -36,8 +37,8 @@ use Passmarked\Exception\HelperFactoryException;
 
 class HelperFactory {
 
-    public function __call($method_name, $args) {
-        
+    public function __call( $method_name, $args ) {
+
         // Ensure the first argument is not null or false
         if( !($response = $args[0]) ) {
             throw new HelperFactoryException("Argument to {$method_name} must implement {$interface}");
@@ -68,5 +69,5 @@ class HelperFactory {
             return new $class_name($response);
         }
     }
-    
+
 }
