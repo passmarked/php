@@ -46,31 +46,16 @@ class RequestFactory {
         $this->config = $config;
     }
 
-    private function preprocess( $method, $uri, $headers, $body ) {
-        
-        // if( $method === 'GET' ) {
-        //     $
-        // }
-        return new Request(
-            $method, 
-            $uri, 
-            $headers, 
-            $body, 
-            $this->config['http_version']
-        );
-    }
-
-    private function injectTelemetry() {
-
-        $data .= "&appname={$app_name}";
-//         {
-//     "token": "kryjoueie:P",
-//     "appname": "passmarked.php",
-//     "device": "library",
-//     "version": "0.0.1",
-//     "platform": "Arch Linux",
-//     "release": "4.7.1-1-ARCH"
-// }
+    private function getTelemetry() {
+        if( !array_key_exists('telemetry', $this->config) || !$this->config->telemetry ){
+            return '';
+        }
+        $data = "&appname=passmarked.php";
+        $data .= "&device=library";
+        $data .= "&version=1.0";
+        $data .= '&platform='.urlencode(PHP_OS);
+        $data .= '&release='.urlencode(php_uname());
+        return $data;
     }
 
     /**
@@ -108,7 +93,7 @@ class RequestFactory {
         }
         return new Request(
             'GET', 
-            $this->getBaseUri()."websites?token={$token}", 
+            $this->getBaseUri() . "websites?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -129,7 +114,7 @@ class RequestFactory {
         }
         return new Request(
             'GET', 
-            $this->getBaseUri() . "websites/{$id}/?token={$token}", 
+            $this->getBaseUri() . "websites/{$id}/?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -146,7 +131,7 @@ class RequestFactory {
     public function getReports( $token = '' ) {
         return new Request(
             'GET', 
-            $this->getBaseUri() . "/reports?token={$token}", 
+            $this->getBaseUri() . "reports?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -164,7 +149,7 @@ class RequestFactory {
     public function getReport( $key = '', $token = '' ) {
         return new Request(
             'GET', 
-            $this->getBaseUri() . "/reports/{$key}?token={$token}", 
+            $this->getBaseUri() . "reports/{$key}?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -186,7 +171,7 @@ class RequestFactory {
         
         return new Request(
             'GET', 
-            $this->getBaseUri() . "balance?token={$token}", 
+            $this->getBaseUri() . "balance?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -208,7 +193,7 @@ class RequestFactory {
 
         return new Request(
             'GET', 
-            $this->getBaseUri() . "user?token={$token}", 
+            $this->getBaseUri() . "user?token={$token}" . $this->getTelemetry(), 
             [], 
             null, 
             $this->config['http_version']
@@ -279,6 +264,8 @@ class RequestFactory {
             }
         }
 
+        $body .= $this->getTelemetry();
+        
         // Return request
         return new Request(
             'POST', 
