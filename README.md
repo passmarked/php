@@ -169,6 +169,7 @@ $psr7_request = $request_factory->create(['url' => 'http://www.github.com']);
 * [getProfile](https://github.com/passmarked/passmarked/wiki/profile)
 * [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
 * [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
+
 ## Contributing
 
 1. Fork the project
