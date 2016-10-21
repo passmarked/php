@@ -49,7 +49,7 @@ $config = [
     'http_version'  => '1.1',   // optional / default
     'telemetry'     => true     // optional / default
 ];
-$client = new \Passmarked\Client([$config); // Get one on passmarked.com
+$client = new \Passmarked\Client($config); // Get one on passmarked.com
 $websites_helper = $client->getWebsites();
 echo $helper->websites_helper;
 // Outputs "ok" or "error" if the Web API returned an error. 
