@@ -62,13 +62,23 @@ class Helper {
         return $this->get( $property );
     }
 
+    public function __call( $name, $arguments ) {
+
+        if( strpos($name,'get') === 0 ) {
+            $property = strtolower(substr($propery,3));
+            return $this->get( $property );
+        } else {
+            return $this->get( strtolower( $name ));
+        }
+    }
+
     /**
      * Access properties using the get method
      * @param string The property you want to get
      * @return mixed The property access or null if not available
      */
     public function get( $property ) {
-        
+
         if( $this->index ) {
             if( property_exists( $this->items[$this->index], $property ) ) {
                 return $this->items[$this->index]->$property;
@@ -76,8 +86,8 @@ class Helper {
                 return null;
             }
         } else {
-            if( property_exists( $this->item, $property) ) {
-                return $this->item->$property;
+            if( property_exists( $this->properties, $property) ) {
+                return $this->properties->$property;
             } else {
                 return null;
             }
@@ -96,7 +106,7 @@ class Helper {
 
     /**
      * Get the Status as reported by the API
-     * @return string The status 
+     * @return string The status
      */
     public function getStatus() {
         if( property_exists( $this->properties, 'status') ) {
@@ -142,7 +152,7 @@ class Helper {
 
     /**
      * Return the GuzzleHttp\Psr7\Response
-     * @return GuzzleHttp\Psr7\Response 
+     * @return GuzzleHttp\Psr7\Response
      */
     public function getPsr7Response() {
         return $this->response;

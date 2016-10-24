@@ -28,7 +28,7 @@
  * @link       http://packagist.org/packages/passmarked/passmarked
  * @link       https://github.com/passmarked/php
  */
- 
+
 namespace Passmarked;
 
 use GuzzleHttp\Psr7\Request;
@@ -47,7 +47,7 @@ class RequestFactory {
     }
 
     private function getTelemetry() {
-        if( !array_key_exists('telemetry', $this->config) || !$this->config->telemetry ){
+        if( !array_key_exists('telemetry', $this->config) || !$this->config['telemetry'] ){
             return '';
         }
         $data = "&appname=passmarked.php";
@@ -66,7 +66,7 @@ class RequestFactory {
         return "{$this->config['api_url']}/v{$this->config['api_version']}/";
     }
 
-    /** 
+    /**
      * Get a Passmarked API token from the config
      * or throw an exception when there is none
      * @return string The API token from the config
@@ -85,17 +85,17 @@ class RequestFactory {
      * if one is not specified.
      * @param string ID of website
      * @param string Passmarked API Token
-     * @return RequestInterface 
+     * @return RequestInterface
      */
     public function getWebsites( $token = '' ) {
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "websites?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "websites?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
@@ -106,17 +106,17 @@ class RequestFactory {
      * if one is not specified.
      * @param string ID of website
      * @param string Passmarked API Token
-     * @return RequestInterface 
+     * @return RequestInterface
      */
     public function getWebsite( $id, $token = '' ) {
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "websites/{$id}/?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "websites/{$id}/?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
@@ -126,14 +126,14 @@ class RequestFactory {
      * Get the reports for the specified key and token or the token in the config
      * if one is not specified.
      * @params string Passmarked API Token
-     * @returns RequestInterface 
+     * @returns RequestInterface
      */
     public function getReports( $token = '' ) {
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "reports?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "reports?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
@@ -144,14 +144,14 @@ class RequestFactory {
      * if one is not specified.
      * @param string key
      * @param string Passmarked API Token
-     * @returns RequestInterface 
+     * @returns RequestInterface
      */
     public function getReport( $key = '', $token = '' ) {
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "reports/{$key}?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "reports/{$key}?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
@@ -161,19 +161,19 @@ class RequestFactory {
      * Get the balance for the specified token or the token in the config
      * if one is not specified.
      * @param string Passmarked API Token
-     * @return RequestInterface 
+     * @return RequestInterface
      */
     public function getBalance( $token = '' ) {
 
         if( !$token ) {
             $token = $this->getTokenFromConfig();
         }
-        
+
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "balance?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "balance?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
@@ -183,7 +183,7 @@ class RequestFactory {
      * Get the profile for the specified token or the token in the config
      * if one is not specified.
      * @param string Passmarked API Token
-     * @return RequestInterface 
+     * @return RequestInterface
      */
     public function getProfile( $token = '' ) {
 
@@ -192,17 +192,17 @@ class RequestFactory {
         }
 
         return new Request(
-            'GET', 
-            $this->getBaseUri() . "user?token={$token}" . $this->getTelemetry(), 
-            [], 
-            null, 
+            'GET',
+            $this->getBaseUri() . "user?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
             $this->config['http_version']
         );
     }
 
     /**
      * create
-     * 
+     *
      * @param array Parameters for create
      * @return RequestInterface
      */
@@ -211,7 +211,7 @@ class RequestFactory {
         // This function only accepts an array
         if( !is_array( $params ) ) {
             throw new RequestFactoryException( __METHOD__.' expects type array' );
-        }  
+        }
         // Check that URL was passed
         if( !array_key_exists( 'url', $params ) || !$params['url'] ) {
             throw new RequestFactoryException( "URL Required" );
@@ -236,17 +236,17 @@ class RequestFactory {
             switch( $param ) {
 
                 case 'recursive':
-                    // Recursive is either true or false                
+                    // Recursive is either true or false
                     $body .= $v ? '&recursive=true' : '&recursive=false';
                     break;
 
                 case 'limit':
-                    // Limit is either limit or 0 (0 is no limit)                
+                    // Limit is either limit or 0 (0 is no limit)
                     $body .= $v ? "&limit={$v}" : '&limit=0';
                     break;
-                    
+
                 case 'bail':
-                    // Bail is true or false                
+                    // Bail is true or false
                     $body .= $v ? '&bail=true' : '&bail=false';
                     break;
 
@@ -254,9 +254,9 @@ class RequestFactory {
                     // Level is an integer
                     $body .= $v ? "&level={$v}" : '';
                     break;
-                
+
                 case 'patterns':
-                    // Array of regular expressions 
+                    // Array of regular expressions
                     foreach( $v as $pattern ) {
                         $body .= $pattern ? "&patterns[]={$pattern}" : '';
                     }
@@ -265,13 +265,13 @@ class RequestFactory {
         }
 
         $body .= $this->getTelemetry();
-        
+
         // Return request
         return new Request(
-            'POST', 
-            $this->getBaseUri() . "reports", 
-            ['Content-Type' => 'application/x-www-form-urlencoded'], 
-            $body, 
+            'POST',
+            $this->getBaseUri() . "reports",
+            ['Content-Type' => 'application/x-www-form-urlencoded'],
+            $body,
             $this->config['http_version']
         );
     }
