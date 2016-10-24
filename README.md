@@ -5,7 +5,7 @@
 
 Use the Passmarked Web API with simple and convenient object oriented PHP. You will require an API token and credit
 which can be obtained by registering on [Passmarked](https://passmarked.com) and generating a token. Passmarked PHP
-does not include bindings to Passmarked's CLI toolkit. The Passmarked CLI tool lives in [this repo](https://github.com/passmarked/passmarked). 
+does not include bindings to Passmarked's CLI toolkit. The Passmarked CLI tool lives in [this repo](https://github.com/passmarked/passmarked).
 
 ## About
 Passmarked PHP is based on [Guzzle 6](https://github.com/guzzle/guzzle) and [Guzzle Psr7](https://github.com/guzzle/psr7)
@@ -36,8 +36,8 @@ composer install
 ```
 
 ## How to use
-You can use Passmarked PHP in a variety of ways: 
-* The easiest way is to use the **Passmarked\Client** class to do the HTTP request 
+You can use Passmarked PHP in a variety of ways:
+* The easiest way is to use the **Passmarked\Client** class to do the HTTP request
 and return a **Passmarked\Helper** object which will give you easy access to the
 information returned by the Web API. The simplest example of using Passmarked PHP in
 this way, looks like this:
@@ -52,12 +52,13 @@ $config = [
 $passmarked = new \Passmarked\Client($config); // Get one on passmarked.com
 $result = $passmarked->create();
 echo $result->status
-// Outputs "ok" or "error" if the Web API returned an error. 
+// Outputs "ok" or "error" if the Web API returned an error.
 ```
 Any other config options will be passed to the underlying **GuzzleHttp\Client** constructor.
 For supported options see [Guzzle's Quickstart](http://docs.guzzlephp.org/en/latest/quickstart.html). However `base_uri`
 will always be replaced with `api_url` or fallback to the default `https://api.passmarked.com`.
 
+*N.B* You can also construct the client without arguments, you will then have to pass your token in as the last argument for each request.
 * Alternatively, you can generate **GuzzleHttp\Psr7\Request** objects using the **Passmarked\RequestFactory**
 and execute the request with another PSR-7 compatible client:
 ```php
@@ -88,51 +89,80 @@ $create_helper = $passmarked->create($options);
 echo $create_helper->uid;
 echo $create_helper->status;
 ```
-
-### getWebsites
+The client also supports the following methods:
 ```php
-$websites_helper = $client->getWebsites();
+// Method signatures
+Passmarked\Helper\Helper getWebsites ( [string $api_token] )
+Passmarked\Helper\Helper getWebsite ( string $key, [string $api_token] )
+Passmarked\Helper\Helper getReport ( string $report_uid, [string $api_token] )
+Passmarked\Helper\Helper getIssues ( string $report_uid, [string $api token] )
+Passmarked\Helper\Helper getUser ( [string $api_token] )
+Passmarked\Helper\Helper getBalance ( [string $api_token] )
+```
+All methods except create optionally accept a API token string as the last parameter. If you
+do not specify a token in the constructor options of **Passmarked\Client** then you must specify
+the token each time when making the request. You can also override the token specified in your
+constructor options for an individual request this way.
+
+## Other Syntaxes
+You can also use some other shorthand syntax if you would prefer.
+
+### Single Result
+```php
+$user = $passmarked->getUser();
+
+// instead of:
+echo $user->getName();
+// you can also do:
+echo $user->name;
+// and even
+echo $user->get('name');
 ```
 
-### getWebsite
+### Multiple Results
 ```php
-$website_helper = $client->getWebsite($key);
+$issues = $passmarked->getIssues();
+
+// instead of:
+echo $issues->at(0)->getMessage();
+// you can also do:
+echo $issues->at(0)->message;
+// and
+echo $issues->at(0)->get('message');
+// or
+echo $issues->items[0]->message;
+// BUT NOT:
+echo $issues->items[0]->getMessage();
+// or
+echo $issues->items[0]->get('message');
+```
+You can iterate over the results by returning them as an array.
+```php
+foreach($issues->getItems() as $item) {
+    echo $item->message;
+}
+// or
+foreach($issues->items as $item) {
+    echo $item->message
+}
+// but you CAN NOT do:
+foreach($issues->items as $item) {
+    echo $item->getMessage();
+}
+// or
+foreach($issues->getItems() as $item) {
+    echo $item->getMessage();
+}
 ```
 
-### getReport
+## Full Example
 ```php
-$report_helper = $client->getReport($uid);
-```
+$client = new \Passmarked\Client();
 
-### getProfile
-```php
-$profile_helper = $client->getProfile();
-```
-
-### getBalance
-```php
-$balance_helper = $client->getBalance();
-```
-All methods except create optionally accept a API token string as the last parameter:
-```php
-$websites_helper = $client->getWebsites$('PASSMARKED_API_TOKEN');
-$website_helper = $client->getWebsite($uid,'PASSMARKED_API_TOKEN');
-$report_helper = $client->getReport($uid,'PASSMARKED_API_TOKEN');
-$profile_helper = $client->getProfile('PASSMARKED_API_TOKEN');
-$balance_helper = $client->getBalance('PASSMARKED_API_TOKEN');
-```
-
-## Full Examples
-```php
-$config = [
-    'api_token'     => 'PASSMARKED_API_TOKEN', // Get one on passmarked.com
-];
-$client = new \Passmarked\Client($config);
-
-$create_helper = $client->create(['url' => 'http://www.github.com']);
+$report = $client->create(['url' => 'http://www.github.com', 'token' => 'PASSMARKEDTOKEN']);
 
 echo "Response Status: {$report->status}";
-echo "UID: {$create_helper->uid}";
+echo "UID: {$reporty->uid}";
 // or
 echo "Response Status: ".$report->get('status');
 echo "UID: ".$create_helper->get('uid');
@@ -161,14 +191,20 @@ $psr7_request = $request_factory->create(['url' => 'http://www.github.com']);
 ```
 
 ## Main API Reference
-
+On Github:
 * [Authentication](https://github.com/passmarked/passmarked/wiki/authentication)
 * [create](https://github.com/passmarked/passmarked/wiki/create)
 * [getReport](https://github.com/passmarked/passmarked/wiki/report)
 * [getWebsites](https://github.com/passmarked/passmarked/wiki/websites)
-* [getProfile](https://github.com/passmarked/passmarked/wiki/profile)
+* [getUser](https://github.com/passmarked/passmarked/wiki/profile)
 * [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
-* [createRunner](https://github.com/passmarked/passmarked/wiki/runner)
+On Passmarked.com
+* [Authentication](https://passmarked.com/docs/access)
+* [create](https://passmarked.com/docs/create)
+* [getReport](https://beta.passmarked.com/docs/view)
+* [getWebsites](#)
+* [getUser](https://beta.passmarked.com/docs/user)
+* [getBalance](https://beta.passmarked.com/docs/balance)
 
 ## Contributing
 

@@ -42,7 +42,7 @@ class Helper {
     protected $properties;
 
     /** @var int The index for the at function */
-    private $index;
+    private $index = null;
 
     /**
      * @param ResponseInterface The Psr7Response
@@ -65,7 +65,7 @@ class Helper {
     public function __call( $name, $arguments ) {
 
         if( strpos($name,'get') === 0 ) {
-            $property = strtolower(substr($property,3));
+            $property = strtolower(substr($name,3));
             return $this->get( $property );
         } else {
             return $this->get( strtolower( $name ));
@@ -78,16 +78,23 @@ class Helper {
      * @return mixed The property access or null if not available
      */
     public function get( $property ) {
-
-        if( $this->index ) {
-            if( property_exists( $this->items[$this->index], $property ) ) {
-                return $this->items[$this->index]->$property;
+        if( $property === "items" && property_exists($this->properties, 'items') ) {
+            return $this->getItems();
+        } else if( $this->index !== null ) {
+            if( property_exists( $this->properties, 'items' ) ) {
+                if( key_exists($this->index, $this->properties->items)) {
+                    return $this->properties->items[$this->index]->$property;
+                } else {
+                    // Invalid array index
+                    return null;
+                }
             } else {
+                // cannot use array syntax on single item
                 return null;
             }
         } else {
-            if( property_exists( $this->properties, $property) ) {
-                return $this->properties->$property;
+            if( property_exists( $this->properties->item, $property) ) {
+                return $this->properties->item->$property;
             } else {
                 return null;
             }
@@ -104,6 +111,14 @@ class Helper {
         return $this;
     }
 
+    public function getItems() {
+        if( property_exists( $this->properties, 'items') ) {
+            return $this->properties->items;
+        } else {
+            // Cannot use on single item
+            return null;
+        }
+    }
     /**
      * Get the Status as reported by the API
      * @return string The status
@@ -147,6 +162,8 @@ class Helper {
      public function getSize() {
          if( $this->response->hasHeader( 'content-length' ) ) {
              return (int) $this->response->getHeader( 'content-length' );
+         } else {
+             return false;
          }
      }
 

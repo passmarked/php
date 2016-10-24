@@ -3,7 +3,7 @@
 /**
  * Passmarked\Client
  *
- * Makes requests to the Passmarked API and returns the results 
+ * Makes requests to the Passmarked API and returns the results
  * wrapped in Passmarked\Helper objects
  *
  * PHP version 5.6
@@ -42,21 +42,21 @@ use Passmarked\RequestFactory;
 use Passmarked\HelperFactory;
 
 class Client extends GuzzleClient {
-    
+
     /** @var string Passmarked/Php Client version. */
     private $version = "1.0";
 
-    /** @var Passmarked\RequestFactory  */    
+    /** @var Passmarked\RequestFactory  */
     private $request_factory;
 
-    /** @var Passmarked\HelperFactory */    
+    /** @var Passmarked\HelperFactory */
     private $helper_factory;
-    
+
     /**
      * @param array $config Our config, with any guzzle options included
      */
     public function __construct( array $config = [] ) {
-        
+
         // Split our options from guzzle options
         // unrecognised options will be passed to guzzle
         $accepted = [ 'telemetry' => '', 'api_url' => '', 'api_version' => '', 'http_version' => '', 'api_token' => '' ];
@@ -83,7 +83,7 @@ class Client extends GuzzleClient {
         $guzzle_options['handler']->push( \GuzzleHttp\Middleware::mapRequest( function ( RequestInterface $request ) {
             // Prepend Passmarked/Php User-Agent info
             $user_agent = $request->getHeader( 'User-Agent' );
-            $request = $request->withoutHeader( 'User-Agent' );            
+            $request = $request->withoutHeader( 'User-Agent' );
             $request = $request->withHeader( 'User-Agent', "Passmarked/Php/{$this->version} {$user_agent[0]}" );
             return $request;
         }));
@@ -92,22 +92,25 @@ class Client extends GuzzleClient {
         $guzzle_options['handler']->push( \GuzzleHttp\Middleware::mapResponse( function ( ResponseInterface $response ) {
             return $response;
         }));
-        
+
         parent::__construct( $guzzle_options );
     }
 
     /**
-     * @param string $method_called 
+     * @param string $method_called
      * @param array $args
      */
     public function __call( $method_called, $args ) {
-                
-        $response_name = $method_called;
-        $psr7_request = call_user_func_array( [$this->request_factory,$method_called], $args );        
-        $psr7_response = $this->send( $psr7_request );
-        $helper = call_user_func_array( [$this->helper_factory, $method_called], [$psr7_response] );
-        return $helper;
 
+        if(method_exists($this->request_factory, $method_called)){
+            $psr7_request = call_user_func_array( [$this->request_factory,$method_called], $args );
+            $psr7_response = $this->send( $psr7_request );
+            $helper = call_user_func_array( [$this->helper_factory, $method_called], [$psr7_response] );
+            return $helper;
+        } else {
+            // NoSuchAPIMethodException
+            throw new \Exception("NoSuchApiMethodException");
+        }
     }
 
 }

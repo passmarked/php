@@ -146,16 +146,31 @@ class RequestFactory {
      * @param string Passmarked API Token
      * @returns RequestInterface
      */
-    public function getReport( $key = '', $token = '' ) {
+    public function getReport( $uid = '', $token = '') {
         return new Request(
             'GET',
-            $this->getBaseUri() . "reports/{$key}?token={$token}" . $this->getTelemetry(),
+            $this->getBaseUri() . "reports/{$uid}?token={$token}" . $this->getTelemetry(),
             [],
             null,
             $this->config['http_version']
         );
     }
 
+    /**
+     * getIssues
+     * Get the issues for the specified report
+     * @param string key
+     * @param string Passmarked API Token
+     */
+     public function getIssues( $uid = '', $token = '') {
+         return new Request(
+             'GET',
+             $this->getBaseUri() . "reports/{$uid}/issues?token={$token}" . $this->getTelemetry(),
+             [],
+             null,
+             $this->config['http_version']
+         );
+     }
     /**
      * getBalance
      * Get the balance for the specified token or the token in the config
@@ -179,13 +194,13 @@ class RequestFactory {
     }
 
     /**
-     * getProfile
-     * Get the profile for the specified token or the token in the config
+     * getUser
+     * Get the User for the specified token or the token in the config
      * if one is not specified.
      * @param string Passmarked API Token
      * @return RequestInterface
      */
-    public function getProfile( $token = '' ) {
+    public function getUser( $token = '' ) {
 
         if( !$token ) {
             $token = $this->getTokenFromConfig();
