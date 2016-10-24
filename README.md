@@ -198,6 +198,7 @@ On Github:
 * [getWebsites](https://github.com/passmarked/passmarked/wiki/websites)
 * [getUser](https://github.com/passmarked/passmarked/wiki/profile)
 * [getBalance](https://github.com/passmarked/passmarked/wiki/balance)
+
 On Passmarked.com
 * [Authentication](https://passmarked.com/docs/access)
 * [create](https://passmarked.com/docs/create)
