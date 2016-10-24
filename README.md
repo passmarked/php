@@ -20,10 +20,10 @@ See the usage examples below for more details.
 ### Composer
 N.B Not yet available
 ```bash
-composer require passmarked/php
+composer require passmarked/passmarked
 ```
 N.B Not yet available
-View the project at [packagist.org/packages/passmarked/php](https://packagist.org/packages/passmarked/php).
+View the project at [packagist.org/packages/passmarked/passmarked](https://packagist.org/packages/passmarked/passmarked).
 
 ### From Source
 
@@ -49,9 +49,9 @@ $config = [
     'http_version'  => '1.1',   // optional / default
     'telemetry'     => true     // optional / default
 ];
-$client = new \Passmarked\Client($config); // Get one on passmarked.com
-$websites_helper = $client->getWebsites();
-echo $helper->websites_helper;
+$passmarked = new \Passmarked\Client($config); // Get one on passmarked.com
+$result = $passmarked->create();
+echo $result->status
 // Outputs "ok" or "error" if the Web API returned an error. 
 ```
 Any other config options will be passed to the underlying **GuzzleHttp\Client** constructor.
@@ -84,9 +84,9 @@ $options = [
     'level'     => 0,       // Optional
     'patterns' => [],       // Optional
 ]
-$create_helper = $client->create($options);
-echo $create_helper-uid;
-echo $create_helper-status;
+$create_helper = $passmarked->create($options);
+echo $create_helper->uid;
+echo $create_helper->status;
 ```
 
 ### getWebsites
