@@ -65,7 +65,7 @@ class Helper {
     public function __call( $name, $arguments ) {
 
         if( strpos($name,'get') === 0 ) {
-            $property = strtolower(substr($propery,3));
+            $property = strtolower(substr($property,3));
             return $this->get( $property );
         } else {
             return $this->get( strtolower( $name ));
