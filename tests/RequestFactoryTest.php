@@ -38,7 +38,7 @@ class RequestFactoryTest extends TestCase {
     private $config = [
         'api_url'      => 'https://api.passmarked.com',
         'api_version'   => '2',
-        'api_token'     => '76ae916065eb11e6acc397d58e05fff63551471597348412',
+        'api_token'     => 'token',
         'http_version'  => '1.1',
         'telemetry'     => true
     ];
