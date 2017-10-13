@@ -99,6 +99,8 @@ class Client extends GuzzleClient {
     /**
      * @param string $method_called
      * @param array $args
+     * @return void
+     * @throws \Exception
      */
     public function __call( $method_called, $args ) {
 
