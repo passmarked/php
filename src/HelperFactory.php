@@ -1,5 +1,6 @@
 <?php
 #@
+
 /**
  * Passmarked\HelperFactory
  *
@@ -22,7 +23,7 @@
  * limitations under the License.
  *
  * @package    Passmarked
- * @author     Werner Roets <werner@io.co.za>
+ * @author     Werner Roets <cobolt.exe@gmail.com>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  * @link       http://packagist.org/packages/passmarked/passmarked
@@ -31,28 +32,29 @@
 
 namespace Passmarked;
 
-use Passmarked\Helpers;
 use Passmarked\Exception\ApiErrorException;
 use Passmarked\Exception\HelperFactoryException;
 
-class HelperFactory {
+class HelperFactory
+{
 
-    public function __call( $method_name, $args ) {
+    public function __call($method_name, $args)
+    {
 
         // Ensure the first argument is not null or false
-        if( !($response = $args[0]) ) {
+        if (!($response = $args[0])) {
             throw new HelperFactoryException("Argument to {$method_name} must implement {$interface}");
         }
 
         // Ensure the first argument implements ResponseInterface
-        $interface_name ='Psr\Http\\Message\\ResponseInterface';
-        if( !in_array($interface_name, class_implements($response)) ) {
+        $interface_name = 'Psr\Http\\Message\\ResponseInterface';
+        if (!in_array($interface_name, class_implements($response))) {
             throw new HelperFactoryException("Argument to {$method_name} must implement {$interface}");
         }
 
         // Check for API reported error
         $http_code = $response->getStatusCode();
-        if ( $http_code >= 400 ) {
+        if ($http_code >= 400) {
             $json_body = json_decode($response->getBody()->getContents());
             $api_code = $json_body->code;
             $api_message = $json_body->message;
@@ -62,7 +64,7 @@ class HelperFactory {
         // Create the helper
         $namespace = '\\Passmarked\\Helper\\';
         $class_name = $namespace . ucfirst($method_name);
-        if( class_exists($class_name) ) {
+        if (class_exists($class_name)) {
             return new $class_name($response);
         } else {
             $class_name = $namespace . 'Helper';

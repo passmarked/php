@@ -22,26 +22,28 @@
  * limitations under the License.
  *
  * @package    Passmarked
- * @author     Werner Roets <werner@io.co.za>
+ * @author     Werner Roets <cobolt.exe@gmail.com>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  * @link       http://packagist.org/packages/passmarked/passmarked
  * @link       https://github.com/passmarked/php
  */
- 
+
 namespace Passmarked\Exception;
 
-use Passmarked\Exception\PassmarkedException;
-
-class ApiErrorException extends PassmarkedException {
+class ApiErrorException extends PassmarkedException
+{
 
     private $api_error_code;
-    public function __construct( $message, $api_error_code, $http_code ) {
+
+    public function __construct($message, $api_error_code, $http_code)
+    {
         $this->api_error_code = $api_error_code;
         parent::__construct($message, $http_code);
     }
 
-    public function getApiErrorCode() {
+    public function getApiErrorCode()
+    {
         return $this->api_error_code;
     }
 }

@@ -1,5 +1,6 @@
 <?php
 #@
+
 /**
  * Passmarked\Exception\RequestFactoryException
  *
@@ -22,7 +23,7 @@
  * limitations under the License.
  *
  * @package    Passmarked
- * @author     Werner Roets <werner@io.co.za>
+ * @author     Werner Roets <cobolt.exe@gmail.com>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  * @link       http://packagist.org/packages/passmarked/passmarked
@@ -31,11 +32,11 @@
 
 namespace Passmarked\Exception;
 
-use Passmarked\Exception\PassmarkedException;
+class RequestFactoryException extends PassmarkedException
+{
 
-class RequestFactoryException extends PassmarkedException {
-
-    public function __construct( $message ) {
+    public function __construct($message)
+    {
         parent::__construct($message);
     }
 }

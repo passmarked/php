@@ -1,5 +1,6 @@
 <?php
 #@
+
 /**
  * Passmarked\RequestFactory
  *
@@ -22,7 +23,7 @@
  * limitations under the License.
  *
  * @package    Passmarked
- * @author     Werner Roets <werner@io.co.za>
+ * @author     Werner Roets <cobolt.exe@gmail.com>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  * @link       http://packagist.org/packages/passmarked/passmarked
@@ -34,7 +35,8 @@ namespace Passmarked;
 use GuzzleHttp\Psr7\Request;
 use Passmarked\Exception\RequestFactoryException;
 
-class RequestFactory {
+class RequestFactory
+{
 
     /** @var array $config */
     private $config;
@@ -42,19 +44,21 @@ class RequestFactory {
     /**
      * @param array $config
      */
-    public function __construct( $config ){
+    public function __construct($config)
+    {
         $this->config = $config;
     }
 
-    private function getTelemetry() {
-        if( !array_key_exists('telemetry', $this->config) || !$this->config['telemetry'] ){
+    private function getTelemetry()
+    {
+        if (!array_key_exists('telemetry', $this->config) || !$this->config['telemetry']) {
             return '';
         }
         $data = "&appname=passmarked.php";
         $data .= "&device=library";
         $data .= "&version=1.0";
-        $data .= '&platform='.urlencode(PHP_OS);
-        $data .= '&release='.urlencode(php_uname());
+        $data .= '&platform=' . urlencode(PHP_OS);
+        $data .= '&release=' . urlencode(php_uname());
         return $data;
     }
 
@@ -62,7 +66,8 @@ class RequestFactory {
      * Get the Base URI from the config
      * @return string The base URI
      */
-    private function getBaseUri(){
+    private function getBaseUri()
+    {
         return "{$this->config['api_url']}/v{$this->config['api_version']}/";
     }
 
@@ -72,23 +77,25 @@ class RequestFactory {
      * @return string The API token from the config
      * @throws RequestFactoryException
      */
-    private function getTokenFromConfig() {
-        if( array_key_exists( 'api_token',$this->config ) ) {
+    private function getTokenFromConfig()
+    {
+        if (array_key_exists('api_token', $this->config)) {
             return $this->config['api_token'];
         } else {
-            throw new RequestFactoryException( "No API token in config" );
+            throw new RequestFactoryException("No API token in config");
         }
     }
+
     /**
      * getWebsite
      * Get the websites for the specified token or the token in the config
      * if one is not specified.
-     * @param string ID of website
-     * @param string Passmarked API Token
-     * @return RequestInterface
+     * @param string $token Passmarked API Token
+     * @return \GuzzleHttp\Psr7\Request
      */
-    public function getWebsites( $token = '' ) {
-        if( !$token ) {
+    public function getWebsites($token = '')
+    {
+        if (!$token) {
             $token = $this->getTokenFromConfig();
         }
         return new Request(
@@ -104,12 +111,13 @@ class RequestFactory {
      * getWebsite
      * Get the website for the specified id and token or the token in the config
      * if one is not specified.
-     * @param string ID of website
+     * @param string $id ID of website
      * @param string Passmarked API Token
-     * @return RequestInterface
+     * @return \GuzzleHttp\Psr7\Request
      */
-    public function getWebsite( $id, $token = '' ) {
-        if( !$token ) {
+    public function getWebsite($id, $token = '')
+    {
+        if (!$token) {
             $token = $this->getTokenFromConfig();
         }
         return new Request(
@@ -126,9 +134,10 @@ class RequestFactory {
      * Get the reports for the specified key and token or the token in the config
      * if one is not specified.
      * @params string Passmarked API Token
-     * @returns RequestInterface
+     * @returns \GuzzleHttp\Psr7\Request
      */
-    public function getReports( $token = '' ) {
+    public function getReports($token = '')
+    {
         return new Request(
             'GET',
             $this->getBaseUri() . "reports?token={$token}" . $this->getTelemetry(),
@@ -142,11 +151,12 @@ class RequestFactory {
      * getReport
      * Get the report for the specified key and token or the token in the config
      * if one is not specified.
-     * @param string key
-     * @param string Passmarked API Token
-     * @returns RequestInterface
+     * @param string $uid
+     * @param string $token Passmarked API Token
+     * @returns \GuzzleHttp\Psr7\Request
      */
-    public function getReport( $uid = '', $token = '') {
+    public function getReport($uid = '', $token = '')
+    {
         return new Request(
             'GET',
             $this->getBaseUri() . "reports/{$uid}?token={$token}" . $this->getTelemetry(),
@@ -159,18 +169,21 @@ class RequestFactory {
     /**
      * getIssues
      * Get the issues for the specified report
-     * @param string key
-     * @param string Passmarked API Token
+     * @param string $uid
+     * @param string $token Passmarked API Token
+     * @returns \GuzzleHttp\Psr7\Request
      */
-     public function getIssues( $uid = '', $token = '') {
-         return new Request(
-             'GET',
-             $this->getBaseUri() . "reports/{$uid}/issues?token={$token}" . $this->getTelemetry(),
-             [],
-             null,
-             $this->config['http_version']
-         );
-     }
+    public function getIssues($uid = '', $token = '')
+    {
+        return new Request(
+            'GET',
+            $this->getBaseUri() . "reports/{$uid}/issues?token={$token}" . $this->getTelemetry(),
+            [],
+            null,
+            $this->config['http_version']
+        );
+    }
+
     /**
      * getBalance
      * Get the balance for the specified token or the token in the config
@@ -178,9 +191,10 @@ class RequestFactory {
      * @param string Passmarked API Token
      * @return RequestInterface
      */
-    public function getBalance( $token = '' ) {
+    public function getBalance($token = '')
+    {
 
-        if( !$token ) {
+        if (!$token) {
             $token = $this->getTokenFromConfig();
         }
 
@@ -200,9 +214,10 @@ class RequestFactory {
      * @param string Passmarked API Token
      * @return RequestInterface
      */
-    public function getUser( $token = '' ) {
+    public function getUser($token = '')
+    {
 
-        if( !$token ) {
+        if (!$token) {
             $token = $this->getTokenFromConfig();
         }
 
@@ -221,19 +236,20 @@ class RequestFactory {
      * @param array Parameters for create
      * @return RequestInterface
      */
-    public function create( $params ){
+    public function create($params)
+    {
 
         // This function only accepts an array
-        if( !is_array( $params ) ) {
-            throw new RequestFactoryException( __METHOD__.' expects type array' );
+        if (!is_array($params)) {
+            throw new RequestFactoryException(__METHOD__ . ' expects type array');
         }
         // Check that URL was passed
-        if( !array_key_exists( 'url', $params ) || !$params['url'] ) {
-            throw new RequestFactoryException( "URL Required" );
+        if (!array_key_exists('url', $params) || !$params['url']) {
+            throw new RequestFactoryException("URL Required");
         }
 
         // Check that token was passed
-        if( !array_key_exists( 'token', $params ) || !$params['token'] ) {
+        if (!array_key_exists('token', $params) || !$params['token']) {
             // Or get from config
             $params['token'] = $this->getTokenFromConfig();
         }
@@ -246,9 +262,9 @@ class RequestFactory {
         unset($params['token']);
 
         // Add any other params
-        foreach( $params as $param => $v ) {
+        foreach ($params as $param => $v) {
 
-            switch( $param ) {
+            switch ($param) {
 
                 case 'recursive':
                     // Recursive is either true or false
@@ -272,7 +288,7 @@ class RequestFactory {
 
                 case 'patterns':
                     // Array of regular expressions
-                    foreach( $v as $pattern ) {
+                    foreach ($v as $pattern) {
                         $body .= $pattern ? "&patterns[]={$pattern}" : '';
                     }
                     break;

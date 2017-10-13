@@ -23,7 +23,7 @@
  * limitations under the License.
  *
  * @package    Passmarked
- * @author     Werner Roets <werner@io.co.za>
+ * @author     Werner Roets <cobolt.exe@gmail.com>
  * @copyright  2016 Passmarked Inc
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  * @link       http://packagist.org/packages/passmarked/passmarked
@@ -37,77 +37,78 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\Middleware;
-use Passmarked\RequestFactory;
-use Passmarked\HelperFactory;
+use GuzzleHttp\Middleware as GuzzleMiddleware;
 
-class Client extends GuzzleClient {
+class Client extends GuzzleClient
+{
 
     /** @var string Passmarked/Php Client version. */
     private $version = "1.0";
 
-    /** @var Passmarked\RequestFactory  */
+    /** @var \Passmarked\RequestFactory */
     private $request_factory;
 
-    /** @var Passmarked\HelperFactory */
+    /** @var \Passmarked\HelperFactory */
     private $helper_factory;
 
     /**
      * @param array $config Our config, with any guzzle options included
      */
-    public function __construct( array $config = [] ) {
+    public function __construct(array $config = [])
+    {
 
         // Split our options from guzzle options
         // unrecognised options will be passed to guzzle
-        $accepted = [ 'telemetry' => '', 'api_url' => '', 'api_version' => '', 'http_version' => '', 'api_token' => '' ];
-        $our_options = array_intersect_key( $config, $accepted );
-        $guzzle_options = array_diff_key( $config, $our_options );
+        $accepted = ['telemetry' => '', 'api_url' => '', 'api_version' => '', 'http_version' => '', 'api_token' => ''];
+        $our_options = array_intersect_key($config, $accepted);
+        $guzzle_options = array_diff_key($config, $our_options);
 
         // Check config and fallback to defaults as required
-        array_key_exists( 'telemetry', $our_options )    || $our_options['telemetry'] = true;
-        array_key_exists( 'api_url', $our_options )      || $our_options['api_url'] = 'https://api.passmarked.com';
-        array_key_exists( 'api_version', $our_options )  || $our_options['api_version'] = '2';
-        array_key_exists( 'http_version', $our_options ) || $our_options['http_version'] = '1.1';
-        array_key_exists( 'api_token', $our_options )    || $our_options['api_token'] = '';
+        array_key_exists('telemetry', $our_options) || $our_options['telemetry'] = true;
+        array_key_exists('api_url', $our_options) || $our_options['api_url'] = 'https://api.passmarked.com';
+        array_key_exists('api_version', $our_options) || $our_options['api_version'] = '2';
+        array_key_exists('http_version', $our_options) || $our_options['http_version'] = '1.1';
+        array_key_exists('api_token', $our_options) || $our_options['api_token'] = '';
 
-        if( !array_key_exists( 'handler', $guzzle_options ) ) {
+        if (!array_key_exists('handler', $guzzle_options)) {
             $guzzle_options['handler'] = new HandlerStack();
-            $guzzle_options['handler']->setHandler( new CurlHandler() );
+            $guzzle_options['handler']->setHandler(new CurlHandler());
         }
 
         // Intialise factories
-        $this->request_factory = new RequestFactory( $our_options );
+        $this->request_factory = new RequestFactory($our_options);
         $this->helper_factory = new HelperFactory();
 
         // Inject request headers
-        $guzzle_options['handler']->push( \GuzzleHttp\Middleware::mapRequest( function ( RequestInterface $request ) {
+        $guzzle_options['handler']->push(GuzzleMiddleware::mapRequest(function (RequestInterface $request) {
             // Prepend Passmarked/Php User-Agent info
-            $user_agent = $request->getHeader( 'User-Agent' );
-            $request = $request->withoutHeader( 'User-Agent' );
-            $request = $request->withHeader( 'User-Agent', "Passmarked/Php/{$this->version} {$user_agent[0]}" );
+            $user_agent = $request->getHeader('User-Agent');
+            $request = $request->withoutHeader('User-Agent');
+            $request = $request->withHeader('User-Agent', "Passmarked/Php/{$this->version} {$user_agent[0]}");
             return $request;
         }));
 
         // Inject/Exctract response information
-        $guzzle_options['handler']->push( \GuzzleHttp\Middleware::mapResponse( function ( ResponseInterface $response ) {
+        $guzzle_options['handler']->push(GuzzleMiddleware::mapResponse(function (ResponseInterface $response) {
             return $response;
         }));
 
-        parent::__construct( $guzzle_options );
+        parent::__construct($guzzle_options);
     }
 
     /**
      * @param string $method_called
      * @param array $args
-     * @return void
+     * @return \Passmarked\Helper\Helper
      * @throws \Exception
      */
-    public function __call( $method_called, $args ) {
+    public function __call($method_called, $args)
+    {
 
-        if(method_exists($this->request_factory, $method_called)){
-            $psr7_request = call_user_func_array( [$this->request_factory,$method_called], $args );
-            $psr7_response = $this->send( $psr7_request );
-            $helper = call_user_func_array( [$this->helper_factory, $method_called], [$psr7_response] );
+        if (method_exists($this->request_factory, $method_called)) {
+            $psr7_request = call_user_func_array([$this->request_factory, $method_called], $args);
+            $psr7_response = $this->send($psr7_request);
+            $helper = call_user_func_array([$this->helper_factory, $method_called], [$psr7_response]);
             return $helper;
         } else {
             // NoSuchAPIMethodException
