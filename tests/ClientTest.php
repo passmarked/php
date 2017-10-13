@@ -51,6 +51,7 @@ class ClientTest extends TestCase
 
     public function __construct()
     {
+        parent::__construct();
         $responses = [
             new Response(200, ['X-Foo' => 'Bar'], '{ "status" : "ok" }'),
             new Response(202, ['Content-Length' => 0]),
